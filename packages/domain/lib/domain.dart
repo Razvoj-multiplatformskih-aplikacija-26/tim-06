@@ -19,4 +19,5 @@ export 'src/geo_point.dart';
 export 'src/identifiers.dart';
 export 'src/result.dart';
 export 'src/user.dart';
+export 'src/ports/ascent_repository.dart';
 // TODO: Export any libraries intended for clients of this package.
