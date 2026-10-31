@@ -1,5 +1,6 @@
 
 import 'package:domain/domain.dart';
+import 'package:use_cases/use_cases.dart';
 
 import '../fake_data.dart';
 
@@ -20,7 +21,7 @@ class FakeAscentRepository implements AscentRepository {
     await Future<void>.delayed(delay);
     if (failNextRequest) {
       failNextRequest = false;
-      throw const RepositoryFailure('namerna greška za demonstraciju');
+      throw const RepositoryException('namerna greska za demonstraciju');
     }
   }
 
@@ -43,6 +44,15 @@ class FakeAscentRepository implements AscentRepository {
   }
 
   @override
+  Future<Ascent?> find(AscentId id) async {
+    await _wait();
+    for (final ascent in _ascents) {
+      if (ascent.id == id) return ascent;
+    }
+    return null;
+  }
+
+  @override
   Future<Ascent> replace(Ascent ascent) async {
     await _wait();
     for (var i = 0; i < _ascents.length; i++) {
@@ -51,9 +61,8 @@ class FakeAscentRepository implements AscentRepository {
         return ascent;
       }
     }
-    throw const RepositoryFailure('staza nije pronađena');
+    throw const RepositoryException('staza nije pronadjena');
   }
-
 
   @override
   Future<Ascent> add(Ascent ascent) async {

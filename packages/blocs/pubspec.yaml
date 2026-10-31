@@ -12,6 +12,9 @@ dependencies:
   domain:
     path: ../domain
   equatable: 2.0.7
+  use_cases:
+    path: ../use_cases
 
 dev_dependencies:
   test: 1.31.1
+

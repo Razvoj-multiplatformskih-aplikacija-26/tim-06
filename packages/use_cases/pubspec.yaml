@@ -1,0 +1,15 @@
+name: use_cases
+description: Akcije koje menjaju stazu (nadji, primeni pravilo, sacuvaj) i port kroz koji to rade. Deli ih Bloc i, kasnije, server.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+resolution: workspace
+
+dependencies:
+  domain:
+    path: ../domain
+
+dev_dependencies:
+  test: 1.31.1

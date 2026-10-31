@@ -8,5 +8,6 @@ workspace:
   - packages/domain
   - packages/fake_data
   - packages/blocs
+  - packages/use_cases
   - mobile
   - backoffice
