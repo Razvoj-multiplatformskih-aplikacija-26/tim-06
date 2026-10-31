@@ -7,5 +7,6 @@ environment:
 workspace:
   - packages/domain
   - packages/fake_data
+  - packages/blocs
   - mobile
   - backoffice
