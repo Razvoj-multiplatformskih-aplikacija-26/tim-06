@@ -1,0 +1,13 @@
+name: staze_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.5
+
+workspace:
+  - packages/domain
+  - packages/fake_data
+  - packages/blocs
+  - packages/use_cases
+  - mobile
+  - backoffice
