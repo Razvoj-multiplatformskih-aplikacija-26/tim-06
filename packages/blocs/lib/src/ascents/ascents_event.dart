@@ -59,3 +59,37 @@ final class AscentArchived extends AscentsEvent {
   @override
   List<Object?> get props => [id.value];
 }
+
+final class AscentCreated extends AscentsEvent {
+  const AscentCreated({
+    required this.id,
+    required this.peakId,
+    required this.title,
+    required this.difficulty,
+    required this.distanceKm,
+    required this.waypoints,
+    this.description,
+    this.submitImmediately = false,
+  });
+
+  final AscentId id;
+  final PeakId peakId;
+  final String title;
+  final Difficulty difficulty;
+  final double distanceKm;
+  final List<Waypoint> waypoints;
+  final String? description;
+  final bool submitImmediately;
+
+  @override
+  List<Object?> get props => [
+    id.value,
+    peakId.value,
+    title,
+    difficulty,
+    distanceKm,
+    waypoints,
+    description,
+    submitImmediately,
+  ];
+}

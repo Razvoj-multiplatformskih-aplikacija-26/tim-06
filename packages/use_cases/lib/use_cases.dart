@@ -10,3 +10,4 @@ export 'src/publish_ascent.dart';
 export 'src/reject_ascent.dart';
 export 'src/repository_exception.dart';
 export 'src/submit_ascent.dart';
+export 'src/get_ascents.dart';
