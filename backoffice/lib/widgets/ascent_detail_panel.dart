@@ -227,7 +227,7 @@ class _Actions extends StatelessWidget {
         label: const Text('Arhiviraj'),
       ),
       Proposed(:final confirmedBy) => Text(
-        'Čeka još ${confirmationsLabel(2 - confirmedBy.length)} planinara. Moderator ne potvrđuje umesto njih.',
+        'Čeka još ${confirmationsLabel(requiredConfirmations - confirmedBy.length)} planinara. Moderator ne potvrđuje umesto njih.',
         style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
       ),
       Draft() || Rejected() || Archived() => Text(

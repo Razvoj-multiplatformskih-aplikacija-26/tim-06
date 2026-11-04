@@ -47,7 +47,7 @@ class ConfirmationsTab extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '${ascent.title.text} · ${kilometers(ascent.distanceKm)} · '
-                            '${proposed.confirmedBy.length}/2 potvrde',
+                            '${proposed.confirmedBy.length}/$requiredConfirmations potvrde',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: 12),
