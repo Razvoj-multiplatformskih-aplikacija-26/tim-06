@@ -33,6 +33,7 @@ class AscentDetailScreen extends StatelessWidget {
         final peak = state.peakOf(ascent);
         final mountain = peak == null ? null : state.mountainOf(peak);
         final theme = Theme.of(context);
+        final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
         return Scaffold(
           body: CustomScrollView(
@@ -51,7 +52,7 @@ class AscentDetailScreen extends StatelessWidget {
                         child: Text(
                           '${peak?.altitudeM ?? '—'}',
                           style: theme.textTheme.displaySmall?.copyWith(
-                            color: Colors.white,
+                            color: textColor,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -63,7 +64,7 @@ class AscentDetailScreen extends StatelessWidget {
                         child: Text(
                           peak?.name ?? 'Nepoznat vrh',
                           style: theme.textTheme.headlineMedium?.copyWith(
-                            color: Colors.white,
+                            color: textColor,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
