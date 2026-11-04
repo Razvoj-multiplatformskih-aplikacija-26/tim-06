@@ -13,6 +13,7 @@ class FakeAscentRepository implements AscentRepository {
   final Duration delay;
 
   bool failNextRequest = false;
+  bool emptyMode = false;
 
   FakeAscentRepository([this.delay = const Duration(milliseconds: 600)]);
 
@@ -40,6 +41,7 @@ class FakeAscentRepository implements AscentRepository {
   @override
   Future<List<Ascent>> loadAscents() async {
     await _wait();
+    if (emptyMode) return const <Ascent>[];
     return List<Ascent>.unmodifiable(_ascents);
   }
 

@@ -139,7 +139,7 @@ class LoadedView extends StatelessWidget {
                     ? const MessageView(icon: Icons.filter_alt_off_outlined, title: 'Nema staza za ovaj filter.')
                     : LayoutBuilder(
                   builder: (context, constraints) {
-                    final wide = constraints.maxWidth >= 560;
+                    final wide = constraints.maxWidth >= 820;
                     return ListView.separated(
                       itemCount: list.length + (wide ? 1 : 0),
                       separatorBuilder: (context, index) => const Divider(height: 1),

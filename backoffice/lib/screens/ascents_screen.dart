@@ -165,6 +165,10 @@ class _AscentsScreenState extends State<AscentsScreen> {
                       const SnackBar(content: Text('Sledeći zahtev će pući, za demonstraciju greške.')),
                     );
                   }
+                  if (value == 'empty') {
+                    if (fakeRepository != null) fakeRepository.emptyMode = !fakeRepository.emptyMode;
+                    context.read<AscentsBloc>().add(const AscentsRequested());
+                  }
                   if (value == 'reload') {
                     context.read<AscentsBloc>().add(const AscentsRequested());
                   }
@@ -172,6 +176,7 @@ class _AscentsScreenState extends State<AscentsScreen> {
                 itemBuilder: (context) => const [
                   PopupMenuItem(value: 'reload', child: Text('Učitaj ponovo')),
                   PopupMenuItem(value: 'fail', child: Text('Izazovi grešku na sledećem zahtevu')),
+                  PopupMenuItem(value: 'empty', child: Text('Prikaži prazno stanje (uklj/isklj)')),
                 ],
               ),
             ],
