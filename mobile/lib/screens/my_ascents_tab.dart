@@ -6,6 +6,7 @@ import 'package:fake_data/fake_data.dart';
 import '../text/labels.dart';
 import '../widgets/status_pill.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/confirm_dialog.dart';
 
 class MyAscentsTab extends StatelessWidget {
   const MyAscentsTab({super.key});
@@ -69,13 +70,31 @@ class MyAscentsTab extends StatelessWidget {
                         children: [
                           if (ascent.status is Draft)
                             FilledButton(
-                              onPressed: () => context.read<AscentsBloc>().add(AscentSubmitted(ascent.id)),
+                              onPressed: () async {
+                                final ok = await confirmAction(
+                                  context,
+                                  title: 'Poslati stazu na potvrdu?',
+                                  text: '${ascent.title.text} postaje vidljiva drugim planinarima.',
+                                  action: 'Posalji',
+                                );
+                                if (!ok || !context.mounted) return;
+                                context.read<AscentsBloc>().add(AscentSubmitted(ascent.id));
+                              },
                               child: const Text('Posalji'),
                             ),
                           if (ascent.status is Draft || ascent.status is Proposed) ...[
                             const SizedBox(width: 8),
                             OutlinedButton(
-                              onPressed: () => context.read<AscentsBloc>().add(AscentArchived(ascent.id)),
+                              onPressed: () async {
+                                final ok = await confirmAction(
+                                  context,
+                                  title: 'Povuci stazu?',
+                                  text: '${ascent.title.text} se povlaci i vise ne ide na potvrdu.',
+                                  action: 'Povuci',
+                                );
+                                if (!ok || !context.mounted) return;
+                                context.read<AscentsBloc>().add(AscentArchived(ascent.id));
+                              },
                               child: const Text('Povuci'),
                             ),
                           ],

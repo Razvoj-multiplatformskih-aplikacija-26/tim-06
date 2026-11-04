@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fake_data/fake_data.dart';
 import '../text/labels.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/confirm_dialog.dart';
 
 class ConfirmationsTab extends StatelessWidget {
   const ConfirmationsTab({super.key});
@@ -61,7 +62,16 @@ class ConfirmationsTab extends StatelessWidget {
                             child: FilledButton(
                               onPressed: (isAuthor || already)
                                   ? null
-                                  : () => context.read<AscentsBloc>().add(AscentConfirmed(ascent.id)),
+                                  : () async {
+                                final ok = await confirmAction(
+                                  context,
+                                  title: 'Potvrditi stazu?',
+                                  text: 'Potvrdu ne mozete da povucete.',
+                                  action: 'Potvrdi',
+                                );
+                                if (!ok || !context.mounted) return;
+                                context.read<AscentsBloc>().add(AscentConfirmed(ascent.id));
+                              },
                               child: Text(isAuthor ? 'Vasa staza' : (already ? 'Potvrdjeno' : 'Potvrdi')),
                             ),
                           ),

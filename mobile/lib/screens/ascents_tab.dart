@@ -3,10 +3,10 @@ import 'package:domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import '../text/labels.dart';
 import '../widgets/difficulty_pill.dart';
 import '../widgets/peak_summit_art.dart';
+import '../dependencies.dart';
 
 class AscentsTab extends StatefulWidget {
   const AscentsTab({super.key});
@@ -28,7 +28,31 @@ class _AscentsTabState extends State<AscentsTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Staze'), centerTitle: false),
+      appBar: AppBar(
+        title: const Text('Staze'),
+        centerTitle: false,
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Jos',
+            onSelected: (value) {
+              if (value == 'fail') {
+                final fake = context.read<MobileDependencies>().fakeRepository;
+                if (fake != null) fake.failNextRequest = true;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Sledeci zahtev ce puci, za demonstraciju greske.')),
+                );
+              }
+              if (value == 'reload') {
+                context.read<AscentsBloc>().add(const AscentsRequested());
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'reload', child: Text('Ucitaj ponovo')),
+              PopupMenuItem(value: 'fail', child: Text('Izazovi gresku na sledecem zahtevu')),
+            ],
+          ),
+        ],
+      ),
       body: BlocBuilder<AscentsBloc, AscentsState>(
         builder: (context, state) {
           return switch (state) {
