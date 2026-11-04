@@ -9,6 +9,7 @@ import '../widgets/difficulty_pill.dart';
 import '../widgets/elevation_profile.dart';
 import '../widgets/peak_summit_art.dart';
 import '../widgets/status_pill.dart';
+import '../widgets/confirm_dialog.dart';
 
 class AscentDetailScreen extends StatelessWidget {
   const AscentDetailScreen({super.key, required this.ascentId});
@@ -193,14 +194,32 @@ class _Actions extends StatelessWidget {
     }
     if (ascent.status is Draft && isAuthor) {
       return FilledButton(
-        onPressed: () => context.read<AscentsBloc>().add(AscentSubmitted(ascent.id)),
+        onPressed: () async {
+          final ok = await confirmAction(
+            context,
+            title: 'Poslati stazu na potvrdu?',
+            text: '${ascent.title.text} postaje vidljiva drugim planinarima.',
+            action: 'Posalji',
+          );
+          if (!ok || !context.mounted) return;
+          context.read<AscentsBloc>().add(AscentSubmitted(ascent.id));
+        },
         child: const Text('Posalji na potvrdu'),
       );
     }
     if (ascent.status is Proposed && !isAuthor) {
       final already = (ascent.status as Proposed).confirmedBy.contains(currentUser.id);
       return FilledButton(
-        onPressed: already ? null : () => context.read<AscentsBloc>().add(AscentConfirmed(ascent.id)),
+        onPressed: already ? null : () async {
+          final ok = await confirmAction(
+            context,
+            title: 'Potvrditi stazu?',
+            text: 'Potvrdu ne mozete da povucete.',
+            action: 'Potvrdi',
+          );
+          if (!ok || !context.mounted) return;
+          context.read<AscentsBloc>().add(AscentConfirmed(ascent.id));
+        },
         child: Text(already ? 'Vec potvrdjeno' : 'Potvrdi stazu'),
       );
     }
