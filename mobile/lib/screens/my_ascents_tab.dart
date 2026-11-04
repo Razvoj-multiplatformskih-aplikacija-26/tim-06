@@ -38,11 +38,11 @@ class MyAscentsTab extends StatelessWidget {
             itemBuilder: (context, index) {
               final ascent = mine[index];
               final peak = state.peakOf(ascent);
-              final missing = 2 - confirmationCount(ascent.status);
+              final missing = requiredConfirmations - confirmationCount(ascent.status);
               final caption = switch (ascent.status) {
                 Draft() => 'Priprema na uredjaju, jos nije poslata.',
                 Proposed() => 'Nedostaje jos $missing ${plural(missing, "potvrda", "potvrde", "potvrda")}.',
-                Confirmed() => 'Ima dve potvrde, ceka moderatora.',
+                Confirmed() => 'Ima sve potvrde, ceka moderatora.',
                 Published() => 'Objavljena u katalogu.',
                 Rejected(:final reason) => 'Odbijena: $reason',
                 Archived() => 'Povucena.',

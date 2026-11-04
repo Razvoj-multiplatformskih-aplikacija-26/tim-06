@@ -56,7 +56,7 @@ class _NewAscentScreenState extends State<NewAscentScreen> {
   String? _validateStartAltitude(String? value, Peak? peak) {
     final parsed = int.tryParse(value ?? '');
     if (parsed == null) return 'Unesite visinu polaska.';
-    if (peak != null && parsed >= peak.altitudeM) {
+    if (peak != null && !isStartBelowSummit(parsed, peak.altitudeM)) {
       return messageFor(StartNotBelowSummit(parsed, peak.altitudeM));
     }
     return null;

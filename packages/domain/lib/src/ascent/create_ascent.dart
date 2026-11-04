@@ -10,6 +10,7 @@ import 'ascent_status.dart';
 import 'ascent_title.dart';
 import 'waypoint.dart';
 
+bool isStartBelowSummit(int startAltitudeM, int summitAltitudeM) => startAltitudeM < summitAltitudeM;
 
 Result<Ascent> createAscent({
   required AscentId id,
@@ -43,7 +44,7 @@ Result<Ascent> createAscent({
 
   final startAltitude = waypoints.first.altitudeM;
   final summitAltitude = waypoints.last.altitudeM;
-  if (startAltitude >= summitAltitude) {
+  if (!isStartBelowSummit(startAltitude, summitAltitude)) {
     return Failure(StartNotBelowSummit(startAltitude,summitAltitude));
   }
 

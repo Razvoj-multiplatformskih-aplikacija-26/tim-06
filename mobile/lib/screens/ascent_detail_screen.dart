@@ -95,7 +95,7 @@ class AscentDetailScreen extends StatelessWidget {
                         _Stat(label: 'duzina', value: kilometers(ascent.distanceKm)),
                         _Stat(label: 'uspon', value: '${ascent.climbM} m'),
                         _Stat(label: 'hoda', value: duration(ascent.estimatedMinutes)),
-                        _Stat(label: 'potvrde', value: '${confirmationCount(ascent.status)}/2'),
+                        _Stat(label: 'potvrde', value: '${confirmationCount(ascent.status)}/$requiredConfirmations'),
                       ],
                     ),
                     const SizedBox(height: 20),

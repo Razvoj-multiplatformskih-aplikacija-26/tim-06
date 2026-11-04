@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:domain/domain.dart';
 
 class ConfirmationDots extends StatelessWidget {
-  const ConfirmationDots({super.key, required this.count, this.required_ = requiredConfirmationsForUi});
+  const ConfirmationDots({super.key, required this.count, this.required_ = requiredConfirmations});
 
-  static const requiredConfirmationsForUi = 2;
 
   final int count;
   final int required_;
