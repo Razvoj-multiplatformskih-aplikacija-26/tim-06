@@ -135,6 +135,7 @@ class _AscentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -152,7 +153,7 @@ class _AscentCard extends StatelessWidget {
                     top: 10,
                     child: Text(
                       '${peak?.altitudeM ?? '—'}',
-                      style: theme.textTheme.headlineSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w800),
+                      style: theme.textTheme.headlineSmall?.copyWith(color: textColor, fontWeight: FontWeight.w800),
                     ),
                   ),
                   Positioned(
@@ -161,7 +162,7 @@ class _AscentCard extends StatelessWidget {
                     right: 12,
                     child: Text(
                       peak?.name ?? 'Nepoznat vrh',
-                      style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w800),
+                      style: theme.textTheme.titleLarge?.copyWith(color: textColor, fontWeight: FontWeight.w800),
                     ),
                   ),
                 ],

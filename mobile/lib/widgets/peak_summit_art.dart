@@ -11,7 +11,7 @@ class PeakSummitArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return CustomPaint(painter: _SummitPainter(altitudeM: altitudeM, referenceM: referenceM, color: scheme.primary));
+    return CustomPaint(painter: _SummitPainter(altitudeM: altitudeM, referenceM: referenceM, color: scheme.primaryContainer));
   }
 }
 
