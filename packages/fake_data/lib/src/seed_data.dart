@@ -27,7 +27,6 @@ const seedUsers = <User>[
   stefan,
 ];
 
-/// Ime autora za prikaz. U KT2 dolazi iz tabele korisnika.
 String authorName(UserId id) {
   for (final user in seedUsers) {
     if (user.id == id) return user.username;
@@ -76,9 +75,8 @@ AscentTitle _title(String text) => AscentTitle.parse(text).valueOrNull!;
 AscentDescription? _description(String? text) =>
     text == null ? null : AscentDescription.parse(text).valueOrNull;
 
-/// Staze se prave funkcijom, a ne konstantom, jer datumi zavise od trenutka pokretanja.
 List<Ascent> seedAscents() => [
-  // čeka odluku moderatora
+  // ceka odluku moderatora
   Ascent(
     const AscentId('a-1'),
     const PeakId('p-trem'),
