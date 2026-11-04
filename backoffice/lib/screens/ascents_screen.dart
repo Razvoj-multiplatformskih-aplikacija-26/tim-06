@@ -107,7 +107,6 @@ class _AscentsScreenState extends State<AscentsScreen> {
         ],
       ),
     );
-    controller.dispose();
     if (reason == null || !mounted) return;
     context.read<AscentsBloc>().add(AscentRejected(ascent.id, reason));
   }
