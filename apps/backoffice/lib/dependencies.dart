@@ -1,11 +1,14 @@
-
 import 'package:domain/domain.dart';
 import 'package:fake_data/fake_data.dart';
 import 'package:use_cases/use_cases.dart';
 
 final class BackofficeDependencies {
-  BackofficeDependencies({required this.clock, required this.user, required AscentRepository ascents, this.fakeRepository})
-      : getAscents = GetAscents(ascents: ascents),
+  BackofficeDependencies({
+    required this.clock,
+    required this.user,
+    required this.ascents,
+    this.fakeRepository,
+  }) : getAscents = GetAscents(ascents: ascents),
         createAscent = CreateAscentUseCase(ascents: ascents, clock: clock),
         submitAscent = SubmitAscent(ascents: ascents),
         confirmAscent = ConfirmAscent(ascents: ascents, clock: clock),
@@ -23,6 +26,7 @@ final class BackofficeDependencies {
 
   final Clock clock;
   final User user;
+  final AscentRepository ascents;
   final GetAscents getAscents;
   final CreateAscentUseCase createAscent;
   final SubmitAscent submitAscent;

@@ -62,14 +62,15 @@ class _NewAscentScreenState extends State<NewAscentScreen> {
     return null;
   }
 
-  void _save({required bool submitImmediately}) {
+  Future<void> _save({required bool submitImmediately}) async {
     if (_peakId == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Izaberite vrh.')));
       return;
     }
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final state = context.read<AscentsBloc>().state;
+    final bloc = context.read<AscentsBloc>();
+    final state = bloc.state;
     if (state is! AscentsLoaded) return;
 
     Peak? peak;
@@ -86,19 +87,30 @@ class _NewAscentScreenState extends State<NewAscentScreen> {
       Waypoint(distance, peak.altitudeM, peak.name, 'vrh', null),
     ];
 
-    context.read<AscentsBloc>().add(
+    final beforeCount = state.ascents.length;
+
+    bloc.add(
       AscentCreated(
-        id: AscentId('a-${DateTime.now().millisecondsSinceEpoch}'),
         peakId: peak.id,
         title: _titleController.text,
         difficulty: _difficulty,
         distanceKm: distance,
         waypoints: waypoints,
         description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
-        submitImmediately: submitImmediately,
       ),
     );
-    context.pop();
+
+    if (submitImmediately) {
+      // Saceka da bloc upise novu stazu (dodata je na pocetak liste), pa je odmah posalje.
+      final newState = await bloc.stream.firstWhere(
+            (s) => s is AscentsLoaded && s.ascents.length > beforeCount,
+      );
+      if (newState is AscentsLoaded) {
+        bloc.add(AscentSubmitted(newState.ascents.first.id));
+      }
+    }
+
+    if (mounted) context.pop();
   }
 
   @override

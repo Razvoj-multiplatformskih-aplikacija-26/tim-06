@@ -27,6 +27,24 @@ const seedUsers = <User>[
   stefan,
 ];
 
+/// Korisnicko ime za prijavu, po korisniku. Lozinka je za sve demo naloge ista i
+/// stoji u .env kao DEMO_PASSWORD; u bazu se nikada ne upisuje otvorena, nego kao
+/// Argon2id hes. Moderator se prijavljuje samo u backoffice, planinari samo u
+/// mobilnu aplikaciju.
+const demoLogins = <String, String>{
+  'u-mod': 'moderator',
+  'u-ana': 'ana',
+  'u-petar': 'petar',
+  'u-jovana': 'jovana',
+  'u-marko': 'marko',
+  'u-dunja': 'dunja',
+  'u-vuk': 'vuk',
+  'u-milica': 'milica',
+  'u-nikola': 'nikola',
+  'u-stefan': 'stefan',
+};
+
+/// Ime autora za prikaz. U KT2 dolazi iz tabele korisnika.
 String authorName(UserId id) {
   for (final user in seedUsers) {
     if (user.id == id) return user.username;
@@ -75,8 +93,9 @@ AscentTitle _title(String text) => AscentTitle.parse(text).valueOrNull!;
 AscentDescription? _description(String? text) =>
     text == null ? null : AscentDescription.parse(text).valueOrNull;
 
+/// Staze se prave funkcijom, a ne konstantom, jer datumi zavise od trenutka pokretanja.
 List<Ascent> seedAscents() => [
-  // ceka odluku moderatora
+  // čeka odluku moderatora
   Ascent(
     const AscentId('a-1'),
     const PeakId('p-trem'),

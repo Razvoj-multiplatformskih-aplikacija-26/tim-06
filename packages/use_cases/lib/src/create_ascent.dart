@@ -1,7 +1,6 @@
 import 'package:domain/domain.dart';
 import 'package:use_cases/src/ports/ascent_repository.dart';
 
-import 'change_status.dart';
 import 'clock.dart';
 
 final class CreateAscentUseCase {
@@ -35,7 +34,7 @@ final class CreateAscentUseCase {
     );
     return switch (result) {
       Failure<Ascent>() => result,
-      Success<Ascent>(:final value) => Success(await ascents.add(value)),
+      Success<Ascent>(:final value) => Success((await ascents.add(value)) as Ascent),
     };
   }
 }

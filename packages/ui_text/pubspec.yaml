@@ -1,0 +1,18 @@
+name: ui_text
+description: Recenice za korisnika, na jednom mestu za obe aplikacije. Cist Dart, bez Fluttera.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+resolution: workspace
+
+dependencies:
+  domain:
+    path: ../domain
+  use_cases:
+    path: ../use_cases
+
+dev_dependencies:
+  test: 1.31.1
+

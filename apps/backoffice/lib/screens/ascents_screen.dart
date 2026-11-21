@@ -166,7 +166,7 @@ class _AscentsScreenState extends State<AscentsScreen> {
                     );
                   }
                   if (value == 'empty') {
-                    if (fakeRepository != null) fakeRepository.emptyMode = !fakeRepository.emptyMode;
+                    if (fakeRepository != null) fakeRepository.failNextRequest = !fakeRepository.failNextRequest;
                     context.read<AscentsBloc>().add(const AscentsRequested());
                   }
                   if (value == 'reload') {

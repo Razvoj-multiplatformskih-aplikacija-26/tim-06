@@ -9,5 +9,7 @@ workspace:
   - packages/fake_data
   - packages/blocs
   - packages/use_cases
-  - mobile
-  - backoffice
+  - packages/api_contract
+  - packages/ui_text
+  - apps/mobile
+  - apps/backoffice

@@ -37,7 +37,7 @@ class _AscentsTabState extends State<AscentsTab> {
             onSelected: (value) {
               if (value == 'empty') {
                 final fake = context.read<MobileDependencies>().fakeRepository;
-                if (fake != null) fake.emptyMode = !fake.emptyMode;
+                if (fake != null) fake.failNextRequest = !fake.failNextRequest;
                 context.read<AscentsBloc>().add(const AscentsRequested());
               }
               if (value == 'fail') {

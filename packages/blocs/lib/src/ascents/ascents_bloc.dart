@@ -6,33 +6,15 @@ import 'ascents_event.dart';
 import 'ascents_state.dart';
 
 class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
-
-  final User _currentUser;
-  final GetAscents _getAscents;
-  final CreateAscentUseCase _create;
-  final SubmitAscent _submit;
-  final ConfirmAscent _confirm;
-  final PublishAscent _publish;
-  final RejectAscent _reject;
-  final ArchiveAscent _archive;
-
-  AscentsBloc({
-    required User currentUser,
-    required GetAscents getAscents,
-    required CreateAscentUseCase createAscent,
-    required SubmitAscent submitAscent,
-    required ConfirmAscent confirmAscent,
-    required PublishAscent publishAscent,
-    required RejectAscent rejectAscent,
-    required ArchiveAscent archiveAscent,
-  }) : _currentUser = currentUser,
-        _getAscents = getAscents,
-        _create = createAscent,
-        _submit = submitAscent,
-        _confirm = confirmAscent,
-        _publish = publishAscent,
-        _reject = rejectAscent,
-        _archive = archiveAscent,
+  AscentsBloc({required AscentRepository repository, required User currentUser, Clock clock = const SystemClock()})
+      : _repository = repository,
+        _currentUser = currentUser,
+        _create = CreateAscentUseCase(ascents: repository, clock: clock),
+        _submit = SubmitAscent(ascents: repository),
+        _confirm = ConfirmAscent(ascents: repository, clock: clock),
+        _publish = PublishAscent(ascents: repository, clock: clock),
+        _reject = RejectAscent(ascents: repository, clock: clock),
+        _archive = ArchiveAscent(ascents: repository, clock: clock),
         super(const AscentsLoading()) {
     on<AscentsRequested>(_onRequested);
     on<AscentCreated>(_onCreated);
@@ -44,17 +26,31 @@ class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
     on<AscentErrorCleared>(_onErrorCleared);
   }
 
+  final AscentRepository _repository;
+  final User _currentUser;
+  final CreateAscentUseCase _create;
+  final SubmitAscent _submit;
+  final ConfirmAscent _confirm;
+  final PublishAscent _publish;
+  final RejectAscent _reject;
+  final ArchiveAscent _archive;
+
   User get currentUser => _currentUser;
 
   Future<void> _onRequested(AscentsRequested event, Emitter<AscentsState> emit) async {
     emit(const AscentsLoading());
     try {
-      final overview = await _getAscents.call();
-      if (overview.ascents.isEmpty) {
+      final mountains = await _repository.loadMountains();
+      final peaks = await _repository.loadPeaks();
+      final users = await _repository.loadUsers();
+      final ascents = await _repository.loadAscents();
+      if (ascents.isEmpty) {
         emit(const AscentsEmpty());
         return;
       }
-      emit(AscentsLoaded(overview.ascents, overview.peaks, overview.mountains));
+      emit(AscentsLoaded(ascents, peaks, mountains, users));
+    } on RepositoryException catch (error) {
+      emit(AscentsFailure(error.failure));
     } on Object {
       emit(const AscentsFailure());
     }
@@ -68,10 +64,9 @@ class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
   Future<void> _onCreated(AscentCreated event, Emitter<AscentsState> emit) async {
     final current = state;
     if (current is! AscentsLoaded) return;
-
     try {
-      final result = await _create.call(
-        id: event.id,
+      final result = await _create(
+        id: AscentId('local-${DateTime.now().microsecondsSinceEpoch}'),
         peakId: event.peakId,
         author: _currentUser,
         title: event.title,
@@ -79,20 +74,16 @@ class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
         distanceKm: event.distanceKm,
         waypoints: event.waypoints,
         description: event.description,
+        track: event.track,
       );
       switch (result) {
         case Failure<Ascent>(:final error):
           emit(current.copyWith(lastError: error));
         case Success<Ascent>(:final value):
-          var created = value;
-          if (event.submitImmediately) {
-            final submitted = await _submit.call(id: created.id, by: _currentUser);
-            if (submitted case Success<Ascent>(:final value)) created = value;
-          }
-          emit(current.copyWith(ascents: [...current.ascents, created], clearError: true));
+          emit(current.copyWith(ascents: [value, ...current.ascents], clearError: true));
       }
-    } on Object {
-      emit(const AscentsFailure());
+    } on RepositoryException catch (error) {
+      emit(AscentsFailure(error.failure));
     }
   }
 
@@ -112,24 +103,25 @@ class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
           ];
           emit(current.copyWith(ascents: updated, clearError: true));
       }
+    } on RepositoryException catch (error) {
+      emit(AscentsFailure(error.failure));
     } on Object {
       emit(const AscentsFailure());
     }
   }
 
   Future<void> _onSubmitted(AscentSubmitted event, Emitter<AscentsState> emit) =>
-      _run(emit, () => _submit.call(id: event.id, by: _currentUser));
+      _run(emit, () => _submit(id: event.id, by: _currentUser));
 
   Future<void> _onConfirmed(AscentConfirmed event, Emitter<AscentsState> emit) =>
-      _run(emit, () => _confirm.call(id: event.id, by: _currentUser));
+      _run(emit, () => _confirm(id: event.id, by: _currentUser));
 
   Future<void> _onPublished(AscentPublished event, Emitter<AscentsState> emit) =>
-      _run(emit, () => _publish.call(id: event.id, by: _currentUser));
+      _run(emit, () => _publish(id: event.id, by: _currentUser));
 
   Future<void> _onRejected(AscentRejected event, Emitter<AscentsState> emit) =>
-      _run(emit, () => _reject.call(id: event.id, by: _currentUser, reason: event.reason));
+      _run(emit, () => _reject(id: event.id, by: _currentUser, reason: event.reason));
 
   Future<void> _onArchived(AscentArchived event, Emitter<AscentsState> emit) =>
-      _run(emit, () => _archive.call(id: event.id, by: _currentUser));
-
+      _run(emit, () => _archive(id: event.id, by: _currentUser));
 }
