@@ -13,3 +13,4 @@ workspace:
   - packages/ui_text
   - apps/mobile
   - apps/backoffice
+  - packages/api_mapping
