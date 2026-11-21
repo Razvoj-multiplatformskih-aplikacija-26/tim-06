@@ -1,5 +1,3 @@
-
-
 import 'package:domain/domain.dart';
 import 'package:equatable/equatable.dart';
 
@@ -18,78 +16,71 @@ final class AscentErrorCleared extends AscentsEvent {
   const AscentErrorCleared();
 }
 
-final class AscentSubmitted extends AscentsEvent {
-
-  final AscentId id;
-  const AscentSubmitted(this.id);
-
-  @override
-  List<Object?> get props => [id.value];
-}
-
-final class AscentConfirmed extends AscentsEvent {
-  final AscentId id;
-  const AscentConfirmed(this.id);
-
-  @override
-  List<Object?> get props => [id.value];
-}
-
-final class AscentPublished extends AscentsEvent {
-  final AscentId id;
-  const AscentPublished(this.id);
-
-  @override
-  List<Object?> get props => [id.value];
-}
-
-final class AscentRejected extends AscentsEvent {
-  final AscentId id;
-  final String reason;
-  const AscentRejected(this.id, this.reason);
-
-  @override
-  List<Object?> get props => [id.value, reason];
-}
-
-final class AscentArchived extends AscentsEvent {
-  final AscentId id;
-  const AscentArchived(this.id);
-
-  @override
-  List<Object?> get props => [id.value];
-}
-
 final class AscentCreated extends AscentsEvent {
   const AscentCreated({
-    required this.id,
     required this.peakId,
     required this.title,
     required this.difficulty,
     required this.distanceKm,
     required this.waypoints,
     this.description,
-    this.submitImmediately = false,
+    this.track = const <GeoPoint>[],
   });
 
-  final AscentId id;
   final PeakId peakId;
   final String title;
   final Difficulty difficulty;
   final double distanceKm;
   final List<Waypoint> waypoints;
   final String? description;
-  final bool submitImmediately;
+  final List<GeoPoint> track;
 
   @override
-  List<Object?> get props => [
-    id.value,
-    peakId.value,
-    title,
-    difficulty,
-    distanceKm,
-    waypoints,
-    description,
-    submitImmediately,
-  ];
+  List<Object?> get props => [peakId.value, title, difficulty, distanceKm, waypoints, description];
+}
+
+final class AscentSubmitted extends AscentsEvent {
+  const AscentSubmitted(this.id);
+
+  final AscentId id;
+
+  @override
+  List<Object?> get props => [id.value];
+}
+
+final class AscentConfirmed extends AscentsEvent {
+  const AscentConfirmed(this.id);
+
+  final AscentId id;
+
+  @override
+  List<Object?> get props => [id.value];
+}
+
+final class AscentPublished extends AscentsEvent {
+  const AscentPublished(this.id);
+
+  final AscentId id;
+
+  @override
+  List<Object?> get props => [id.value];
+}
+
+final class AscentRejected extends AscentsEvent {
+  const AscentRejected(this.id, this.reason);
+
+  final AscentId id;
+  final String reason;
+
+  @override
+  List<Object?> get props => [id.value, reason];
+}
+
+final class AscentArchived extends AscentsEvent {
+  const AscentArchived(this.id);
+
+  final AscentId id;
+
+  @override
+  List<Object?> get props => [id.value];
 }

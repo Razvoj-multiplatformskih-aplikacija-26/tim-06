@@ -1,28 +1,28 @@
-
 import 'package:domain/domain.dart';
 import 'package:use_cases/use_cases.dart';
 
-import '../fake_data.dart';
+import 'seed_data.dart';
 
 class FakeAscentRepository implements AscentRepository {
+  FakeAscentRepository([this.delay = const Duration(milliseconds: 600)]);
 
   final List<Mountain> _mountains = List<Mountain>.of(seedMountains);
   final List<Peak> _peaks = List<Peak>.of(seedPeaks);
+  final List<User> _users = List<User>.of(seedUsers);
   final List<Ascent> _ascents = List<Ascent>.of(seedAscents());
 
   final Duration delay;
 
   bool failNextRequest = false;
-  bool emptyMode = false;
-
-  FakeAscentRepository([this.delay = const Duration(milliseconds: 600)]);
-
 
   Future<void> _wait() async {
     await Future<void>.delayed(delay);
     if (failNextRequest) {
       failNextRequest = false;
-      throw const RepositoryException('namerna greska za demonstraciju');
+      throw const RepositoryException(
+        'namerna greska za demonstraciju',
+        failure: RepositoryFailure.unreachable,
+      );
     }
   }
 
@@ -39,9 +39,14 @@ class FakeAscentRepository implements AscentRepository {
   }
 
   @override
+  Future<List<User>> loadUsers() async {
+    await _wait();
+    return List<User>.unmodifiable(_users);
+  }
+
+  @override
   Future<List<Ascent>> loadAscents() async {
     await _wait();
-    if (emptyMode) return const <Ascent>[];
     return List<Ascent>.unmodifiable(_ascents);
   }
 
@@ -55,21 +60,22 @@ class FakeAscentRepository implements AscentRepository {
   }
 
   @override
-  Future<Ascent> replace(Ascent ascent) async {
+  Future<Result<Ascent>> add(Ascent ascent) async {
     await _wait();
-    for (var i = 0; i < _ascents.length; i++) {
-      if (_ascents[i].id == ascent.id) {
-        _ascents[i] = ascent;
-        return ascent;
-      }
-    }
-    throw const RepositoryException('staza nije pronadjena');
+    _ascents.add(ascent);
+    return Success(ascent);
   }
 
   @override
-  Future<Ascent> add(Ascent ascent) async {
+  Future<Result<Ascent>> replace(Ascent ascent, {required AscentStatus from}) async {
     await _wait();
-    _ascents.add(ascent);
-    return ascent;
+    for (var i = 0; i < _ascents.length; i++) {
+      if (_ascents[i].id != ascent.id) continue;
+      final current = _ascents[i];
+      if (current.status != from) return Failure(InvalidTransition(current.status, ascent.status));
+      _ascents[i] = ascent;
+      return Success(ascent);
+    }
+    return const Failure(NotFound());
   }
 }

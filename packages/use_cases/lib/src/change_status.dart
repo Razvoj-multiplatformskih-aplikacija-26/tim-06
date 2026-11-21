@@ -1,5 +1,6 @@
 import 'package:domain/domain.dart';
-import 'package:use_cases/src/ports/ascent_repository.dart';
+
+import 'ports/ascent_repository.dart';
 
 Future<Result<Ascent>> changeStatus(
     AscentRepository ascents,
@@ -12,6 +13,6 @@ Future<Result<Ascent>> changeStatus(
   final result = change(current);
   return switch (result) {
     Failure<Ascent>() => result,
-    Success<Ascent>(:final value) => Success(await ascents.replace(value)),
+    Success<Ascent>(:final value) => ascents.replace(value, from: current.status),
   };
 }

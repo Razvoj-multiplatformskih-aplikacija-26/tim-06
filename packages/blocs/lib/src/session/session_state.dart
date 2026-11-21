@@ -1,0 +1,33 @@
+import 'package:domain/domain.dart';
+import 'package:equatable/equatable.dart';
+
+enum SignOutReason { loggedOut, expired, unreachable, roleNotAllowed }
+
+sealed class SessionState extends Equatable {
+  const SessionState();
+
+  @override
+  List<Object?> get props => const [];
+}
+
+final class SessionUnknown extends SessionState {
+  const SessionUnknown();
+}
+
+final class SignedOut extends SessionState {
+  const SignedOut({this.reason});
+
+  final SignOutReason? reason;
+
+  @override
+  List<Object?> get props => [reason];
+}
+
+final class SignedIn extends SessionState {
+  const SignedIn(this.user);
+
+  final User user;
+
+  @override
+  List<Object?> get props => [user];
+}

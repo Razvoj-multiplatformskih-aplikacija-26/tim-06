@@ -1,0 +1,17 @@
+name: api_mapping
+description: Prevod izmedju domena i HTTP ugovora, na jednom mestu i u oba smera. Koriste ga klijenti i server.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+resolution: workspace
+
+dependencies:
+  api_contract:
+    path: ../api_contract
+  domain:
+    path: ../domain
+
+dev_dependencies:
+  test: 1.31.1

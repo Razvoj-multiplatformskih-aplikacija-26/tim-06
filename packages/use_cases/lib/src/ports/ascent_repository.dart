@@ -7,11 +7,13 @@ abstract interface class AscentRepository {
 
   Future<List<Peak>> loadPeaks();
 
+  Future<List<User>> loadUsers();
+
   Future<List<Ascent>> loadAscents();
 
   Future<Ascent?> find(AscentId id);
 
-  Future<Ascent> replace(Ascent ascent);
+  Future<Result<Ascent>> add(Ascent ascent);
 
-  Future<Ascent> add(Ascent ascent);
+  Future<Result<Ascent>> replace(Ascent ascent, {required AscentStatus from});
 }

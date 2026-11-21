@@ -1,0 +1,11 @@
+name: api_contract
+description: HTTP ugovor sistema Staze, zajednicki za klijente i server. Ne uvozi domen, Flutter ni dart:io.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+resolution: workspace
+
+dev_dependencies:
+  test: 1.31.1
