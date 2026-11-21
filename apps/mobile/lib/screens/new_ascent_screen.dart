@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../text/domain_errors.dart';
 import '../text/labels.dart';
+import 'dart:async';
 
 class NewAscentScreen extends StatefulWidget {
   const NewAscentScreen({super.key});
@@ -100,14 +101,28 @@ class _NewAscentScreenState extends State<NewAscentScreen> {
       ),
     );
 
-    if (submitImmediately) {
-      // Saceka da bloc upise novu stazu (dodata je na pocetak liste), pa je odmah posalje.
-      final newState = await bloc.stream.firstWhere(
-            (s) => s is AscentsLoaded && s.ascents.length > beforeCount,
-      );
-      if (newState is AscentsLoaded) {
-        bloc.add(AscentSubmitted(newState.ascents.first.id));
+    AscentsState afterCreate;
+    try {
+      afterCreate = await bloc.stream
+          .firstWhere((s) => s is AscentsLoaded && (s.ascents.length > beforeCount || s.lastError != null))
+          .timeout(const Duration(seconds: 15));
+    } on TimeoutException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server ne odgovara. Pokusajte ponovo.')),
+        );
       }
+      return;
+    }
+
+    if (afterCreate is! AscentsLoaded) return;
+
+    if (afterCreate.lastError != null) {
+      return;
+    }
+
+    if (submitImmediately) {
+      bloc.add(AscentSubmitted(afterCreate.ascents.first.id));
     }
 
     if (mounted) context.pop();
