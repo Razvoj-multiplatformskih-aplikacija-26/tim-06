@@ -14,3 +14,4 @@ workspace:
   - apps/mobile
   - apps/backoffice
   - packages/api_mapping
+  - apps/server
