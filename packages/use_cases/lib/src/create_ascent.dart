@@ -34,7 +34,7 @@ final class CreateAscentUseCase {
     );
     return switch (result) {
       Failure<Ascent>() => result,
-      Success<Ascent>(:final value) => Success((await ascents.add(value)) as Ascent),
+      Success<Ascent>(:final value) => await ascents.add(value),
     };
   }
 }
