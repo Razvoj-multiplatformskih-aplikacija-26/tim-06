@@ -1,4 +1,3 @@
-
 import 'package:backoffice/screens/status_filter.dart';
 import 'package:blocs/blocs.dart';
 import 'package:domain/domain.dart';
@@ -160,10 +159,13 @@ class _AscentsScreenState extends State<AscentsScreen> {
                 onSelected: (value) {
                   if (value == 'reload') {
                     context.read<AscentsBloc>().add(const AscentsRequested());
+                  } else if (value == 'logout') {
+                    context.read<SessionBloc>().add(const SessionLogOutRequested());
                   }
                 },
                 itemBuilder: (context) => const [
                   PopupMenuItem(value: 'reload', child: Text('Učitaj ponovo')),
+                  PopupMenuItem(value: 'logout', child: Text('Odjava')),
                 ],
               ),
             ],

@@ -37,6 +37,16 @@ class _HomeShellState extends State<HomeShell> {
         context.read<AscentsBloc>().add(const AscentErrorCleared());
       },
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Staze'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Odjava',
+              onPressed: () => context.read<SessionBloc>().add(const SessionLogOutRequested()),
+            ),
+          ],
+        ),
         body: IndexedStack(
           index: _index,
           children: const [AscentsTab(), ConfirmationsTab(), MyAscentsTab()],
