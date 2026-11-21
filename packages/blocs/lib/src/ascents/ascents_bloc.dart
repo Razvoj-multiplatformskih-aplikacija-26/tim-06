@@ -95,7 +95,8 @@ class AscentsBloc extends Bloc<AscentsEvent, AscentsState> {
       final result = await action();
       switch (result) {
         case Failure<Ascent>(:final error):
-          emit(current.copyWith(lastError: error));
+          final fresh = await _repository.loadAscents();
+          emit(current.copyWith(ascents: fresh, lastError: error));
         case Success<Ascent>(:final value):
           final updated = [
             for (final ascent in current.ascents)
