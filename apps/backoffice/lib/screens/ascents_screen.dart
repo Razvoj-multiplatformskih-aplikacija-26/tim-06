@@ -142,7 +142,6 @@ class _AscentsScreenState extends State<AscentsScreen> {
         context.read<AscentsBloc>().add(const AscentErrorCleared());
       },
       builder: (context, state) {
-        final fakeRepository = context.read<BackofficeDependencies>().fakeRepository;
         return Scaffold(
           appBar: AppBar(
             title: const Text('Staze · backoffice'),
@@ -159,24 +158,12 @@ class _AscentsScreenState extends State<AscentsScreen> {
               PopupMenuButton<String>(
                 tooltip: 'Još',
                 onSelected: (value) {
-                  if (value == 'fail') {
-                    if (fakeRepository != null) fakeRepository.failNextRequest = true;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sledeći zahtev će pući, za demonstraciju greške.')),
-                    );
-                  }
-                  if (value == 'empty') {
-                    if (fakeRepository != null) fakeRepository.failNextRequest = !fakeRepository.failNextRequest;
-                    context.read<AscentsBloc>().add(const AscentsRequested());
-                  }
                   if (value == 'reload') {
                     context.read<AscentsBloc>().add(const AscentsRequested());
                   }
                 },
                 itemBuilder: (context) => const [
                   PopupMenuItem(value: 'reload', child: Text('Učitaj ponovo')),
-                  PopupMenuItem(value: 'fail', child: Text('Izazovi grešku na sledećem zahtevu')),
-                  PopupMenuItem(value: 'empty', child: Text('Prikaži prazno stanje (uklj/isklj)')),
                 ],
               ),
             ],

@@ -1,36 +1,50 @@
+import 'package:api_client/api_client.dart';
 import 'package:domain/domain.dart';
 import 'package:fake_data/fake_data.dart';
 import 'package:use_cases/use_cases.dart';
 
-final class MobileDependencies {
-  MobileDependencies({
+/// jedino mesto u mobilnoj aplikaciji koje zna da li podaci dolaze sa servera ili
+/// iz liste u memoriji, ekrani i blokovi iznad ovoga ne znaju ni jedno ni drugo
+final class AppDependencies {
+  AppDependencies({
     required this.clock,
-    required this.user,
     required this.ascents,
-    this.fakeRepository,
-  }) : getAscents = GetAscents(ascents: ascents),
-        createAscent = CreateAscentUseCase(ascents: ascents, clock: clock),
-        submitAscent = SubmitAscent(ascents: ascents),
-        confirmAscent = ConfirmAscent(ascents: ascents, clock: clock),
-        publishAscent = PublishAscent(ascents: ascents, clock: clock),
-        rejectAscent = RejectAscent(ascents: ascents, clock: clock),
-        archiveAscent = ArchiveAscent(ascents: ascents, clock: clock);
+    required this.weather,
+    required SessionRepository sessions,
+  }) : logIn = LogIn(sessions: sessions),
+        restoreSession = RestoreSession(sessions: sessions),
+        logOut = LogOut(sessions: sessions),
+        sessionExpirations = sessions.expirations;
 
-  factory MobileDependencies.fake({Clock clock = const SystemClock(), Duration delay = const Duration(milliseconds: 600)}) {
-    final repository = FakeAscentRepository(delay);
-    return MobileDependencies(clock: clock, user: currentUser, ascents: repository, fakeRepository: repository);
+  factory AppDependencies.server({
+    required Uri baseUri,
+    required TokenStore tokens,
+    Clock clock = const SystemClock(),
+  }) {
+    final api = ApiClient(baseUri: baseUri, tokens: tokens);
+    return AppDependencies(
+      clock: clock,
+      ascents: HttpAscentRepository(api),
+      weather: HttpWeatherService(api),
+      sessions: HttpSessionRepository(api),
+    );
+  }
+
+  /// rad bez servera, za ekrane i za demonstraciju kada baza nije podignuta
+  factory AppDependencies.fake({Clock clock = const SystemClock(), Duration delay = const Duration(milliseconds: 400)}) {
+    return AppDependencies(
+      clock: clock,
+      ascents: FakeAscentRepository(delay),
+      weather: const FakeWeather(),
+      sessions: FakeSessions(signedInAs: currentUser),
+    );
   }
 
   final Clock clock;
-  final User user;
   final AscentRepository ascents;
-  final GetAscents getAscents;
-  final CreateAscentUseCase createAscent;
-  final SubmitAscent submitAscent;
-  final ConfirmAscent confirmAscent;
-  final PublishAscent publishAscent;
-  final RejectAscent rejectAscent;
-  final ArchiveAscent archiveAscent;
-
-  final FakeAscentRepository? fakeRepository;
+  final WeatherService weather;
+  final LogIn logIn;
+  final RestoreSession restoreSession;
+  final LogOut logOut;
+  final Stream<void> sessionExpirations;
 }

@@ -1,39 +1,51 @@
+import 'package:api_client/api_client.dart';
 import 'package:domain/domain.dart';
 import 'package:fake_data/fake_data.dart';
 import 'package:use_cases/use_cases.dart';
 
+/// jedino mesto u backoffice-u koje zna odakle podaci dolaze
 final class BackofficeDependencies {
   BackofficeDependencies({
     required this.clock,
-    required this.user,
     required this.ascents,
-    this.fakeRepository,
-  }) : getAscents = GetAscents(ascents: ascents),
-        createAscent = CreateAscentUseCase(ascents: ascents, clock: clock),
-        submitAscent = SubmitAscent(ascents: ascents),
-        confirmAscent = ConfirmAscent(ascents: ascents, clock: clock),
-        publishAscent = PublishAscent(ascents: ascents, clock: clock),
-        rejectAscent = RejectAscent(ascents: ascents, clock: clock),
-        archiveAscent = ArchiveAscent(ascents: ascents, clock: clock);
+    required this.weather,
+    required SessionRepository sessions,
+  }) : logIn = LogIn(sessions: sessions),
+        restoreSession = RestoreSession(sessions: sessions),
+        logOut = LogOut(sessions: sessions),
+        sessionExpirations = sessions.expirations;
+
+  factory BackofficeDependencies.server({
+    required Uri baseUri,
+    required TokenStore tokens,
+    Clock clock = const SystemClock(),
+  }) {
+    final api = ApiClient(baseUri: baseUri, tokens: tokens);
+    return BackofficeDependencies(
+      clock: clock,
+      ascents: HttpAscentRepository(api),
+      weather: HttpWeatherService(api),
+      sessions: HttpSessionRepository(api),
+    );
+  }
 
   factory BackofficeDependencies.fake({
     Clock clock = const SystemClock(),
-    Duration delay = const Duration(milliseconds: 600),
+    Duration delay = const Duration(milliseconds: 400),
   }) {
-    final repository = FakeAscentRepository(delay);
-    return BackofficeDependencies(clock: clock, user: moderator, ascents: repository, fakeRepository: repository);
+    return BackofficeDependencies(
+      clock: clock,
+      ascents: FakeAscentRepository(delay),
+      weather: const FakeWeather(),
+      sessions: FakeSessions(signedInAs: moderator),
+    );
   }
 
   final Clock clock;
-  final User user;
   final AscentRepository ascents;
-  final GetAscents getAscents;
-  final CreateAscentUseCase createAscent;
-  final SubmitAscent submitAscent;
-  final ConfirmAscent confirmAscent;
-  final PublishAscent publishAscent;
-  final RejectAscent rejectAscent;
-  final ArchiveAscent archiveAscent;
-
-  final FakeAscentRepository? fakeRepository;
+  final WeatherService weather;
+  final LogIn logIn;
+  final RestoreSession restoreSession;
+  final LogOut logOut;
+  final Stream<void> sessionExpirations;
 }

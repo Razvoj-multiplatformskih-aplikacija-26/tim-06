@@ -35,26 +35,12 @@ class _AscentsTabState extends State<AscentsTab> {
           PopupMenuButton<String>(
             tooltip: 'Jos',
             onSelected: (value) {
-              if (value == 'empty') {
-                final fake = context.read<MobileDependencies>().fakeRepository;
-                if (fake != null) fake.failNextRequest = !fake.failNextRequest;
-                context.read<AscentsBloc>().add(const AscentsRequested());
-              }
-              if (value == 'fail') {
-                final fake = context.read<MobileDependencies>().fakeRepository;
-                if (fake != null) fake.failNextRequest = true;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Sledeci zahtev ce puci, za demonstraciju greske.')),
-                );
-              }
               if (value == 'reload') {
                 context.read<AscentsBloc>().add(const AscentsRequested());
               }
             },
             itemBuilder: (context) => const [
-              PopupMenuItem(value: 'empty', child: Text('Prikazi prazno stanje (uklj/isklj)')),
               PopupMenuItem(value: 'reload', child: Text('Ucitaj ponovo')),
-              PopupMenuItem(value: 'fail', child: Text('Izazovi gresku na sledecem zahtevu')),
             ],
           ),
         ],

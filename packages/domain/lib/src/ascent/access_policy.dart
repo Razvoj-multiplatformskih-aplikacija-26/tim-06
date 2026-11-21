@@ -27,4 +27,10 @@ abstract final class AccessPolicy {
   };
 
   static bool canEdit(User user, Ascent ascent) => user.role.isModerator || ascent.authorId == user.id;
+
+
+  /// Mobilna aplikacija je za planinare, backoffice za moderatore.
+  static bool usesMobileApp(User user) => user.role == Role.hiker;
+
+  static bool usesBackoffice(User user) => user.role.isModerator;
 }
